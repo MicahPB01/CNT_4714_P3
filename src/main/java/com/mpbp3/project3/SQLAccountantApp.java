@@ -28,3 +28,4 @@ public class SQLAccountantApp extends Application {
         launch();
     }
 }
+
