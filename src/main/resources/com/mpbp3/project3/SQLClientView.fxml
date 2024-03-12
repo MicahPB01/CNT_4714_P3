@@ -3,6 +3,8 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -10,28 +12,28 @@
 
 <AnchorPane maxHeight="600.0" maxWidth="800.0" minHeight="600.0" minWidth="800.0" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.mpbp3.project3.SQLClientCon">
    <children>
-      <Button fx:id="clearResultButton" layoutX="14.0" layoutY="561.0" mnemonicParsing="false" text="Clear Result Window" />
-      <TextArea fx:id="SQLExecResult" layoutX="14.0" layoutY="270.0" prefHeight="282.0" prefWidth="775.0" />
-      <TextArea fx:id="SQLCommand" layoutX="485.0" layoutY="24.0" prefHeight="200.0" prefWidth="301.0" />
-      <Label layoutX="485.0" layoutY="6.0" text="Enter An SQL Command" />
+      <Button fx:id="clearResultButton" layoutX="14.0" layoutY="561.0" mnemonicParsing="false" onAction="#handleClearResult" text="Clear Result Window" />
+      <TextArea fx:id="SQLCommand" layoutX="320.0" layoutY="24.0" prefHeight="233.0" prefWidth="466.0" />
+      <Label layoutX="320.0" layoutY="6.0" text="Enter An SQL Command" />
       <Label layoutX="14.0" layoutY="6.0" text="Connection Details" />
       <FlowPane layoutX="14.0" layoutY="24.0" prefHeight="154.0" prefWidth="301.0">
          <children>
             <Label prefHeight="20.0" prefWidth="100.0" text="DB URL Properties" />
-            <ComboBox fx:id="DBURLProp" prefWidth="150.0" />
+            <ComboBox fx:id="DBURLProp" prefHeight="25.0" prefWidth="201.0" />
             <Label prefHeight="20.0" prefWidth="100.0" text="User Properties" />
-            <ComboBox fx:id="UserProp" prefWidth="150.0" />
+            <ComboBox fx:id="UserProp" prefHeight="25.0" prefWidth="201.0" />
             <Label prefHeight="20.0" prefWidth="100.0" text="Username" />
-            <TextField fx:id="username" />
+            <TextField fx:id="username" prefHeight="25.0" prefWidth="201.0" />
             <Label prefHeight="20.0" prefWidth="100.0" text="Password" />
-            <TextField fx:id="password" />
-            <Button fx:id="connect" mnemonicParsing="false" onAction="#handleConnection" text="Connect to Database" />
+            <PasswordField fx:id="password" prefHeight="25.0" prefWidth="201.0" />
+            <Button fx:id="connect" mnemonicParsing="false" onAction="#handleConnection" prefHeight="25.0" prefWidth="142.0" text="Connect to Database" />
             <Button fx:id="disconnect" mnemonicParsing="false" onAction="#handleDisconnect" text="Disconnect From Database" />
          </children>
       </FlowPane>
-      <Button fx:id="clearSQL" layoutX="485.0" layoutY="242.0" mnemonicParsing="false" text="Clear SQL Command" />
-      <Button fx:id="executeSQL" layoutX="636.0" layoutY="242.0" mnemonicParsing="false" text="Execute SQL Command" />
+      <Button fx:id="clearSQL" layoutX="172.0" layoutY="193.0" mnemonicParsing="false" onAction="#handleClearSQL" prefHeight="25.0" prefWidth="140.0" text="Clear SQL Command" />
+      <Button fx:id="executeSQL" layoutX="172.0" layoutY="230.0" mnemonicParsing="false" onAction="#handleExecute" text="Execute SQL Command" />
       <Label layoutX="14.0" layoutY="255.0" text="SQL Execution Result Window" />
-      <TextField fx:id="connectionURL" editable="false" layoutX="14.0" layoutY="153.0" prefHeight="25.0" prefWidth="469.0" text="No Connection Established" />
+      <TextField fx:id="connectionURL" editable="false" layoutX="14.0" layoutY="153.0" prefHeight="25.0" prefWidth="301.0" text="No Connection Established" />
+      <TableView fx:id="SQLExecResult" layoutX="14.0" layoutY="272.0" prefHeight="282.0" prefWidth="772.0" />
    </children>
 </AnchorPane>

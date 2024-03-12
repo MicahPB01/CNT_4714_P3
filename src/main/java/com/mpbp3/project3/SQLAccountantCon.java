@@ -1,11 +1,10 @@
 /*
 Name: Micah Puccio-Ball
 Course: CNT 4714 Spring 2024
-Assignment title: Project 3 – A Two-tier Client-Server Application
+Assignment title: Project 3 – A Specialized Accountant Application
 Date: March 7, 2024
-Class: SQLClientCon
+Class: SQLAccountantCon
 */
-
 package com.mpbp3.project3;
 
 import javafx.beans.property.SimpleStringProperty;
@@ -17,7 +16,6 @@ import javafx.scene.control.*;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,12 +24,12 @@ import java.util.Properties;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 
-public class SQLClientCon {
+public class SQLAccountantCon {
 
     @FXML
-    private ComboBox<String> DBURLProp;
+    private TextField DBURLProp;
     @FXML
-    private ComboBox<String> UserProp;
+    private TextField UserProp;
     @FXML
     private TextField username;
     @FXML
@@ -45,18 +43,15 @@ public class SQLClientCon {
     @FXML
     private TableView<ObservableList<String>> SQLExecResult;
 
-    private Connection operationsConnection;
 
 
 
 
+    public void initialize()   {
 
-    public void initialize() throws SQLException, IOException, ClassNotFoundException {
+        DBURLProp.setText("operationslog.properties");
+        UserProp.setText("theaccountant.properties");
 
-        DBURLProp.getItems().addAll(dbProps());
-        UserProp.getItems().addAll(userProps());
-
-        operationsConnection = operationDB();
 
 
     }
@@ -64,51 +59,15 @@ public class SQLClientCon {
 
 
 
-    private List<String> dbProps()   {
-        File file = new File("src/main/resources/com/mpbp3/project3/dbProps");
-        File[] files = file.listFiles((d, name) -> name.endsWith(".properties"));
-        List<String> fileNames = new ArrayList<>();
 
-        if(files != null)   {
-
-            for(int i = 0; i < files.length; i++)   {
-                if(files[i].getName().equals("operationslog.properties"))   {
-                    continue;
-                }
-                fileNames.add(files[i].getName());
-            }
-        }
-        System.out.println(fileNames);
-
-        return fileNames;
-    }
-
-    private List<String> userProps()   {
-        File file = new File("src/main/resources/com/mpbp3/project3/userProps");
-        File[] files = file.listFiles((d, name) -> name.endsWith(".properties"));
-        List<String> fileNames = new ArrayList<>();
-
-        if(files != null)   {
-            for(int i = 0; i < files.length; i++)   {
-                if(files[i].getName().equals("theaccountant.properties"))   {
-                    continue;
-                }
-
-
-                fileNames.add(files[i].getName());
-            }
-        }
-
-        return fileNames;
-    }
 
 
 
     @FXML
     private void handleConnection(ActionEvent event)   {
         try   {
-            String userPropPath = "src/main/resources/com/mpbp3/project3/userProps/" + UserProp.getSelectionModel().getSelectedItem();
-            String dbPropPath = "src/main/resources/com/mpbp3/project3/dbProps/" + DBURLProp.getSelectionModel().getSelectedItem();
+            String userPropPath = "src/main/resources/com/mpbp3/project3/userProps/theaccountant.properties";
+            String dbPropPath = "src/main/resources/com/mpbp3/project3/dbProps/operationslog.properties";
 
             Properties userProps = new Properties();
             userProps.load(new FileInputStream(userPropPath));
@@ -118,7 +77,6 @@ public class SQLClientCon {
 
             if(!username.getText().equals(dbUser) || !password.getText().equals(dbPassword))   {
                 connectionURL.setText("NOT CONNECTED - User Credentials Do Not Match Properties File!");
-
             }
             else {
 
@@ -166,7 +124,6 @@ public class SQLClientCon {
 
     @FXML
     public void handleExecute(ActionEvent event) {
-        boolean query = true;
 
         String sql = SQLCommand.getText();
 
@@ -182,33 +139,12 @@ public class SQLClientCon {
             }
             else   {
                 int rowsAffected = statement.executeUpdate(sql);
-                query = false;
+
                 showAlert("Successful Update", rowsAffected + " rows updated.", Alert.AlertType.INFORMATION);
 
 
             }
 
-
-            if(query)   {
-                String updateQuery = "INSERT INTO operationscount (login_username, num_queries, num_updates) VALUES (?, 1, 0) ON DUPLICATE KEY UPDATE num_queries = num_queries + 1";
-                try (PreparedStatement pstmt = operationsConnection.prepareStatement(updateQuery)) {
-                    pstmt.setString(1, username.getText());
-                    pstmt.executeUpdate();
-                }
-                catch(SQLException e) {
-                    e.printStackTrace();
-                }
-            }
-            else   {
-                String updateQuery = "INSERT INTO operationscount (login_username, num_queries, num_updates) VALUES (?, 0, 1) ON DUPLICATE KEY UPDATE num_updates = num_updates + 1";
-                try (PreparedStatement pstmt = operationsConnection.prepareStatement(updateQuery)) {
-                    pstmt.setString(1, username.getText());
-                    pstmt.executeUpdate();
-                }
-                catch(SQLException e) {
-                    e.printStackTrace();
-                }
-            }
 
 
         }
@@ -218,8 +154,6 @@ public class SQLClientCon {
         }
 
     }
-
-
 
 
 
@@ -257,30 +191,6 @@ public class SQLClientCon {
         alert.setHeaderText(null);
         alert.setContentText(content);
         alert.showAndWait();
-    }
-
-    private Connection operationDB() throws ClassNotFoundException, IOException, SQLException {
-        Properties DBProps = new Properties();
-        Properties userProps = new Properties();
-
-        try(FileInputStream DBStream = new FileInputStream("src/main/resources/com/mpbp3/project3/dbProps/operationslog.properties"))   {
-            DBProps.load(DBStream);
-        }
-
-        try(FileInputStream userStream = new FileInputStream("src/main/resources/com/mpbp3/project3/userProps/project3app.properties"))   {
-            userProps.load(userStream);
-        }
-
-        String dbURL = DBProps.getProperty("url");
-        String dbDriver = DBProps.getProperty("driver");
-        String username = userProps.getProperty("username");
-        String password = userProps.getProperty("password");
-
-
-        Class.forName(dbDriver);
-
-        return DriverManager.getConnection(dbURL, username, password);
-
     }
 
 
